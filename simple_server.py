@@ -31,13 +31,27 @@ async def startup():
     if image_model_name:
         from diffusers import StableDiffusionPipeline
         print(f"Loading image generation model: {image_model_name}")
+        
+        # 디바이스 및 데이터 타입 자동 선택
+        if torch.cuda.is_available():
+            device = "cuda"
+            dtype = torch.float16
+            print("Using CUDA acceleration")
+        elif torch.backends.mps.is_available():
+            device = "mps"
+            dtype = torch.float16
+            print("Using MPS (Apple Silicon) acceleration")
+        else:
+            device = "cpu"
+            dtype = torch.float32
+            print("Using CPU (no GPU acceleration)")
+        
         image_pipe = StableDiffusionPipeline.from_pretrained(
             image_model_name, 
-            torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32
+            torch_dtype=dtype
         )
-        if torch.cuda.is_available():
-            image_pipe = image_pipe.to("cuda")
-        print("Image generation model loaded successfully")
+        image_pipe = image_pipe.to(device)
+        print(f"Image generation model loaded successfully on {device}")
     else:
         print("No image model specified, image generation disabled")
 
