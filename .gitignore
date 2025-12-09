@@ -11,6 +11,7 @@ env/
 .idea/
 .claude/
 *.swp
+*.iml
 
 # OS
 .DS_Store
