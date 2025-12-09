@@ -16,13 +16,19 @@ Simplified vLLM server with unified token generation:
 # Setup
 pip install -r requirements.txt
 
-# Server
+# Server (text only)
 python simple_server.py --model microsoft/DialoGPT-medium [--port 8000]
 
-# Client  
+# Server (text + image)  
+python simple_server.py --model microsoft/DialoGPT-medium --image-model nota-ai/bk-sdm-tiny [--port 8000]
+
+# Client (text)
 python simple_client.py --message "Hello" [--stream] [--url URL]
+
+# Client (image)
+python simple_client.py --prompt "a cat on a table" [--steps 20] [--url URL]
 ```
 
 ## API
-- `POST /chat` - `{message: str, stream: bool}`
-- Returns JSON (normal) or Server-Sent Events (streaming)
+- `POST /chat` - `{message: str, stream: bool}` - Returns JSON (normal) or Server-Sent Events (streaming)
+- `POST /image` - `{prompt: str, steps: int}` - Returns JSON with base64 encoded image
